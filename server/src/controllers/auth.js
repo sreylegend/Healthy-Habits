@@ -2,10 +2,16 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { promisify } = require('util');
-const sendgrid = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-// Initialize SendGrid
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+// Create email transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_FROM,
+    pass: process.env.EMAIL_PASSWORD
+  }
+});
 
 // Register user
 exports.register = async (req, res) => {
@@ -216,22 +222,34 @@ exports.resetPassword = async (req, res) => {
 
 // Helper function to send verification email
 const sendVerificationEmail = async (email, token) => {
-  const msg = {
-    to: email,
-    from: process.env.EMAIL_FROM,
-    subject: 'Email Verification',
-    html: `Please click this link to verify your email: ${process.env.APP_URL}/verify-email/${token}`
-  };
-  await sendgrid.send(msg);
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: 'Email Verification',
+      html: `Please click this link to verify your email: ${process.env.APP_URL}/verify-email/${token}`
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Verification email sent successfully');
+  } catch (error) {
+    console.error('Error sending verification email:', error.message);
+  }
 };
 
 // Helper function to send password reset email
 const sendPasswordResetEmail = async (email, token) => {
-  const msg = {
-    to: email,
-    from: process.env.EMAIL_FROM,
-    subject: 'Password Reset',
-    html: `Please click this link to reset your password: ${process.env.APP_URL}/reset-password/${token}`
-  };
-  await sendgrid.send(msg);
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: 'Password Reset',
+      html: `Please click this link to reset your password: ${process.env.APP_URL}/reset-password/${token}`
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent successfully');
+  } catch (error) {
+    console.error('Error sending password reset email:', error.message);
+  }
 };
