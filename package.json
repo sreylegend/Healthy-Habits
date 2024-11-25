@@ -1,0 +1,15 @@
+{
+  "name": "healthy-habits-app",
+  "version": "1.0.0",
+  "description": "A modern, AI-powered mobile application focused on promoting general well-being through habit formation and behavior change.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.4"
+  }
+}
